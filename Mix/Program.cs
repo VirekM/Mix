@@ -126,7 +126,7 @@ namespace Mix
     {
       float distance = 0;
       //Pythagoras - using math class is expensive.
-      distance = ((a.latitude - b.latitude) * (a.latitude - b.latitude) + (a.longitude - b.longitude) * (a.longitude - b.longitude));
+      distance = (float)Math.Sqrt(((a.latitude - b.latitude) * (a.latitude - b.latitude) + (a.longitude - b.longitude) * (a.longitude - b.longitude)));
 
       return distance;
     }
@@ -135,16 +135,27 @@ namespace Mix
     {
       float distance = 999999999;
       var index = -1;
+      //Degrees around the hemisphere - can be changed dependent on how far you want to search
+      var hemiDegree = 1;
+      int count = 0;
 
+      Console.WriteLine("For Test point:" + testPoint.latitude +" "+ testPoint.longitude);
       for (int a = 0; a < allPoints.Count; a++)
       {
-        var distanceBetweenTwoPoints = FindDistance(testPoint, allPoints[a]);
-        if (distanceBetweenTwoPoints < distance)
+        if((testPoint.latitude + hemiDegree > allPoints[a].latitude) && (testPoint.latitude - hemiDegree < allPoints[a].latitude) 
+          && (testPoint.longitude + hemiDegree > allPoints[a].longitude) && (testPoint.longitude - hemiDegree < allPoints[a].longitude))
         {
-          distance = distanceBetweenTwoPoints;
-          index = a;
+          count++;
+          var distanceBetweenTwoPoints = FindDistance(testPoint, allPoints[a]);
+          if (distanceBetweenTwoPoints < distance)
+          {
+            distance = distanceBetweenTwoPoints;
+            index = a;
+          }
         }
       }
+      Console.WriteLine("Count:" + count);
+
       return index;
     }
   }
